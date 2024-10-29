@@ -1,12 +1,16 @@
-﻿using System;
+﻿using MikrotikDotNet;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace AssetTracking
 {
@@ -14,24 +18,27 @@ namespace AssetTracking
     {
         public Form1()
         {
-            // Initial factory
-            var factory = new FlurlTbClientFactory
+
+   
+            using (var conn = new MKConnection("192.168.1.74", "admin", "kristjanjakregor"))
             {
-                Options = new ThingsboardNetFlurlOptions()
-                {
-                    BaseUrl = "http://localhost:8080",
-                    Username = "kristjanmaetaly1.2.3.4@gmail.com",
-                    Password = "KristjanjaKregor",
-                }
-            };
+                conn.Open();
+                var cmd = conn.CreateCommand("iot bluetooth scanners advertisements print where address=D4:01:C3:6B:9F:8E");
+                var result = cmd.ExecuteReader();
+                foreach (var line in result)
+                    Console.WriteLine(line);
 
-            // Get the client
-            var authClient = factory.CreateAuthClient();
-            var userInfo = await authClient.GetCurrentUserAsync();
-            Console.WriteLine($"Hello {userInfo.Email}");
-        }
+                var cmd1 = conn.CreateCommand("iot bluetooth scanners advertisements print where address=DC:2C:6E:73:A0:D4");
+                var result1 = cmd1.ExecuteReader();
+                foreach (var line1 in result1)
+                    Console.WriteLine(line1);
 
-        InitializeComponent();
+            }
+
+
+
+
+            InitializeComponent();
         }
     }
 }

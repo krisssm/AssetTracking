@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssetTracking", "AssetTrack
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImportFromDatabase", "ImportFromDatabase\ImportFromDatabase.csproj", "{724B05DA-CD7E-4EA7-933C-A504FF7F30D3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Proov", "Proov\Proov.csproj", "{86898A64-AB80-4531-88BA-46C12B58778E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{724B05DA-CD7E-4EA7-933C-A504FF7F30D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{724B05DA-CD7E-4EA7-933C-A504FF7F30D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{724B05DA-CD7E-4EA7-933C-A504FF7F30D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86898A64-AB80-4531-88BA-46C12B58778E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86898A64-AB80-4531-88BA-46C12B58778E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86898A64-AB80-4531-88BA-46C12B58778E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86898A64-AB80-4531-88BA-46C12B58778E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
