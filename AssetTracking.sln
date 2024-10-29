@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34525.116
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssetTracking", "AssetTracking\AssetTracking.csproj", "{ACD31496-539D-453F-AC4B-C02336CFD9F0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImportFromDatabase", "ImportFromDatabase\ImportFromDatabase.csproj", "{724B05DA-CD7E-4EA7-933C-A504FF7F30D3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{ACD31496-539D-453F-AC4B-C02336CFD9F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ACD31496-539D-453F-AC4B-C02336CFD9F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ACD31496-539D-453F-AC4B-C02336CFD9F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ACD31496-539D-453F-AC4B-C02336CFD9F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{724B05DA-CD7E-4EA7-933C-A504FF7F30D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{724B05DA-CD7E-4EA7-933C-A504FF7F30D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{724B05DA-CD7E-4EA7-933C-A504FF7F30D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{724B05DA-CD7E-4EA7-933C-A504FF7F30D3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {44B4391E-A356-4439-83C8-16BE6BC88413}
+	EndGlobalSection
+EndGlobal
