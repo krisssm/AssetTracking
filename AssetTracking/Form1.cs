@@ -14,6 +14,7 @@ using System.Windows.Forms;
 using static System.Windows.Forms.LinkLabel;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 using System.Drawing.Drawing2D;
+using System.Data.SqlClient;
 
 namespace AssetTracking
 {
@@ -22,30 +23,12 @@ namespace AssetTracking
         private PictureBox pictureFloorplan;
 
         string rssiValue = "-53";
+        
 
         public Form1()
         {
 
-
-            //using (var conn = new MKConnection("192.168.1.74", "admin", "kristjanjakregor"))
-            //{
-            //    conn.Open();
-            //    var cmd = conn.CreateCommand("iot bluetooth scanners advertisements print where address=D4:01:C3:6B:9F:8E");
-            //    var result = cmd.ExecuteReader();
-            //    foreach (var line in result)
-            //    {
-            //        Console.WriteLine(line);
-            //        Console.WriteLine("TTT");
-            //    }
-
-            //    var cmd1 = conn.CreateCommand("iot bluetooth scanners advertisements print where address=DC:2C:6E:73:A0:D4");
-            //    var result1 = cmd1.ExecuteReader();
-            //    foreach (var line1 in result1)
-            //        Console.WriteLine(line1);
-            //    Console.WriteLine("Tere");
-            //    conn.Close();
-            //}
-
+           
             this.Text = "Draw Empty Circle on PictureBox Example";
             this.Size = new Size(400, 400);
 
@@ -76,57 +59,11 @@ namespace AssetTracking
             Application.Run(new Form1());
         }
 
-        //private void btnFloorplan_Click(object sender, EventArgs e)
-        //{
-        //    if (pictureFloorplan1.Visible == false)
-        //    {
-        //        pictureFloorplan1.Visible = true;
-        //    }
-        //    else if (pictureFloorplan1.Visible == true)
-        //    {
-        //        pictureFloorplan1.Visible = false;
-        //    }
-        //}
+
 
         private void btnSearch_Click(object sender, EventArgs e)
         {
-
-            using (var conn = new MKConnection("192.168.1.74", "admin", "kristjanjakregor"))
-            {
-                conn.Open();
- 
-
-                string assetName = textSearch.Text; // Your variable that holds the MAC address
-                var cmd = conn.CreateCommand(string.Format("iot bluetooth scanners advertisements print where address={0}", assetName));
-
-                var result = cmd.ExecuteReader();
-                string originalString = "";
-                foreach (var line in result)
-                { 
-                    Console.WriteLine(line);
-                    originalString = line;
- 
-                }
-                    
-                Console.WriteLine("Tere1");
-                conn.Close();
-
-
-                // Regular expression to match rssi value
-                var match = Regex.Match(originalString, @"rssi=(.*?)=");
-
-                if (match.Success)
-                {
-                    rssiValue = match.Groups[1].Value;
-                    Console.WriteLine($"The value of rssi is: {rssiValue}");
-                    lblRSSI.Text = rssiValue;
-                    pictureFloorplan.Invalidate();
-                }
-                else
-                {
-                    Console.WriteLine("Rssi not found in the string.");
-                }
-            }
+            timer1.Enabled = true;
         }
         private void PictureFloorplan_Paint(object sender, PaintEventArgs e)
         {
@@ -143,6 +80,103 @@ namespace AssetTracking
             {
                 // Draw the empty circle
                 g.DrawEllipse(pen, centerX - radius, centerY - radius, radius * 2, radius * 2);
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+                timer1.Enabled = false;
+
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            string assetName = textSearch.Text; // Variable that holds the MAC address
+            using (var conn = new MKConnection("192.168.1.74", "admin", "KristjanJaKregor"))
+            {
+                conn.Open();
+
+                string originalString = "";
+                var cmd = conn.CreateCommand(string.Format("iot bluetooth scanners advertisements print where address={0}", assetName));
+                try
+                {
+                    var result = cmd.ExecuteReader();
+                    
+                    foreach (var line in result)
+                    {
+                        Console.WriteLine(line);
+                        originalString = line;
+
+                    }
+                }
+
+                catch (Exception ex)
+                {
+                    // Handle any other errors here
+                    Console.WriteLine($"Error: {ex.Message}");
+                }
+                
+
+
+                conn.Close();
+
+
+                // Regular expression to match rssi value
+                var match = Regex.Match(originalString, @"rssi=(.*?)=");
+
+                if (match.Success)
+                {
+                    rssiValue = match.Groups[1].Value;
+                    Console.WriteLine($"The value of rssi on Gateway 1 is: {rssiValue}");
+                    label6.Text = rssiValue;
+                    pictureFloorplan.Invalidate();
+                }
+                else
+                {
+                    Console.WriteLine("Rssi not found in the string on Gateway 1.");
+                }
+            }
+
+
+            using (var conn = new MKConnection("192.168.1.161", "admin", "KristjanJaKregor"))
+            {
+
+                conn.Open();
+
+                string assetName1 = textSearch.Text; // Your variable that holds the MAC address
+                var cmd = conn.CreateCommand(string.Format("iot bluetooth scanners advertisements print where address={0}", assetName));
+                string originalString1 = "";
+                try
+                {
+                    var result = cmd.ExecuteReader();
+                    foreach (var line1 in result)
+                    {
+                        Console.WriteLine(line1);
+                        originalString1 = line1;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Handle any other errors here
+                    Console.WriteLine($"Error: {ex.Message}");
+                }
+              
+                conn.Close();
+
+                // Regular expression to match rssi value
+                var match1 = Regex.Match(originalString1, @"rssi=(.*?)=");
+
+                if (match1.Success)
+                {
+                    rssiValue = match1.Groups[1].Value;
+                    Console.WriteLine($"The value of rssi on Gateway 2 is: {rssiValue}");
+                    label5.Text = rssiValue;
+                    pictureFloorplan.Invalidate();
+                }
+                else
+                {
+                    Console.WriteLine("Rssi not found in the string on Gateway 2.");
+                }
             }
         }
     }
