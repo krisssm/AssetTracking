@@ -16,6 +16,7 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 using System.Drawing.Drawing2D;
 using System.Data.SqlClient;
 using System.IO;
+using Polly.Caching;
 
 namespace AssetTracking
 {
@@ -24,7 +25,11 @@ namespace AssetTracking
         private PictureBox pictureFloorplan;
 
         string rssiValue = "-53";
-        
+        int rssi1;
+        int rssi2;
+        int horizontal;
+
+
 
         public Form1()
         {
@@ -39,7 +44,7 @@ namespace AssetTracking
                 Location = new Point(270, 0), // Position of the PictureBox
                 Size = new Size(750, 750), // Size of the PictureBox
                 BorderStyle = BorderStyle.FixedSingle,
-                Image = Image.FromFile("C:\\Users\\Kris\\Desktop\\Plaan.png"), // Set the image path
+                Image = Image.FromFile("C:\\Users\\Kris\\source\\repos\\AssetTracking\\Plaan.png"), // Set the image path
                 SizeMode = PictureBoxSizeMode.StretchImage // Adjust the image to fit the PictureBox
             };
 
@@ -72,9 +77,10 @@ namespace AssetTracking
             Graphics g = e.Graphics;
 
             // Define the circle's position and size
-            int centerX = pictureFloorplan.Width / 2; // Center of the PictureBox
+            int centerX = pictureFloorplan.Width / 2 - horizontal; // Center of the PictureBox
             int centerY = pictureFloorplan.Height / 2; // Center of the PictureBox
-            int radius = (int.Parse(rssiValue) -20) * -3; // Radius of the circle
+            //int radius = (int.Parse(rssiValue) -20) * -3; // Radius of the circle
+            int radius = 30; // Radius of the circle
 
             // Create a pen to draw the circle
             using (Pen pen = new Pen(Color.Red, 2)) // Color and width of the pen
@@ -131,23 +137,23 @@ namespace AssetTracking
 
                 if (match.Success)
                 {
-                    int rssi = int.Parse(match.Groups[1].Value);
-                    Console.WriteLine($"The value of rssi on Gateway 1 is: {rssi}");
-                    if (rssi > strongestRssi)
+                    rssi1 = int.Parse(match.Groups[1].Value);
+                    Console.WriteLine($"The value of rssi on Gateway 1 is: {rssi1}");
+                    if (rssi1 > strongestRssi)
                     {
-                        strongestRssi = rssi;
+                        strongestRssi = rssi1;
                         strongestRssiGateway = "Gateway 1";
                     }
                 }
-                /* 
+                
                 if (match.Success)
                 {
                     rssiValue = match.Groups[1].Value;
                     Console.WriteLine($"The value of rssi on Gateway 1 is: {rssiValue}");
-                    label6.Text = rssiValue;
+                    label6.Text = Convert.ToString(rssi1);
                     pictureFloorplan.Invalidate();
                 }
-                */
+                
                 else
                 {
                     Console.WriteLine("Rssi not found in the string on Gateway 1.");
@@ -187,14 +193,14 @@ namespace AssetTracking
 
                 if (match1.Success)
                 {
-                    int rssi = int.Parse(match1.Groups[1].Value);
+                    rssi2 = int.Parse(match1.Groups[1].Value);
                     //rssiValue = match1.Groups[1].Value;
-                    Console.WriteLine($"The value of rssi on Gateway 2 is: {rssiValue}");
-                    //label5.Text = rssiValue;
+                    Console.WriteLine($"The value of rssi on Gateway 2 is: {rssi2}");
+                    label5.Text = Convert.ToString(rssi2);
                     //pictureFloorplan.Invalidate();
-                    if (rssi > strongestRssi)
+                    if (rssi2 > strongestRssi)
                     {
-                        strongestRssi = rssi;
+                        strongestRssi = rssi2;
                         strongestRssiGateway = "Gateway 2";
                     }
                 }
@@ -204,7 +210,7 @@ namespace AssetTracking
                 }
             }
             // Display the strongest RSSI and update the UI
-            if (strongestRssiGateway != "")
+            /*if (strongestRssiGateway != "")
             {
                 Console.WriteLine($"The strongest RSSI is {strongestRssi} from {strongestRssiGateway}.");
                 label6.Text = $"Strongest RSSI: {strongestRssi} ({strongestRssiGateway})";
@@ -215,6 +221,41 @@ namespace AssetTracking
             {
                 Console.WriteLine("No RSSI values found.");
             }
+            */
         }
+
+        private void btnFloorplan_Click(object sender, EventArgs e)
+        {
+            rssi1 = Convert.ToInt16(textBox1.Text);
+            rssi2 = Convert.ToInt16(textBox2.Text);
+
+            if (rssi2 > -60 && rssi1 > -60 && rssi2 < -45 && rssi1 < -45) //Saatja on kahe gateway vahel enamvähem keskel
+            {
+                Console.WriteLine("CASE 5");
+                horizontal = 0;
+            }
+            if (rssi1 > -50 && rssi2 < -50 && rssi2 > -70) //Saatja on kahe gateway vahel ja rohkem gateway 1 poole
+            {
+                Console.WriteLine("CASE 1");
+                horizontal = -2 * rssi2;
+            }
+            else if(rssi2 > -60 && rssi1 < -60 && rssi1 > -70) //Saatja on kahe gateway vahel ja rohkem gateway 2 poole
+            {
+                Console.WriteLine("CASE 2");
+                horizontal = -2 * rssi1;
+            }
+            else if (rssi1 < -30 && rssi2 < -70) //Saatja on möödas gateway 1st
+            {
+                Console.WriteLine("CASE 3");
+                horizontal = 40 - 3 * rssi1;
+            }
+            else if (rssi2 < -30 && rssi1 < -70) //Saatja on möödas gateway 2st
+            {
+                Console.WriteLine("CASE 4");
+                horizontal = -40 + 3 * rssi1;
+            }
+            pictureFloorplan.Invalidate();
+        }
+
     }
 }
