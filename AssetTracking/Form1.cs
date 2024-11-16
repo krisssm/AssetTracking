@@ -39,7 +39,7 @@ namespace AssetTracking
                 Location = new Point(270, 0), // Position of the PictureBox
                 Size = new Size(750, 750), // Size of the PictureBox
                 BorderStyle = BorderStyle.FixedSingle,
-                Image = Image.FromFile("C:\\Users\\krego\\source\\repos\\AssetTracking\\Plaan.png"), // Set the image path
+                Image = Image.FromFile("C:\\Users\\Kris\\Desktop\\Plaan.png"), // Set the image path
                 SizeMode = PictureBoxSizeMode.StretchImage // Adjust the image to fit the PictureBox
             };
 
