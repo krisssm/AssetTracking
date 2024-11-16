@@ -15,6 +15,7 @@ using static System.Windows.Forms.LinkLabel;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 using System.Drawing.Drawing2D;
 using System.Data.SqlClient;
+using System.IO;
 
 namespace AssetTracking
 {
@@ -92,6 +93,10 @@ namespace AssetTracking
         private void timer1_Tick(object sender, EventArgs e)
         {
             string assetName = textSearch.Text; // Variable that holds the MAC address
+            int strongestRssi = int.MinValue; // Tracks the strongest RSSI value
+            string strongestRssiGateway = ""; //Tracks which gateway has the strongest signal
+
+            // Gateway 1
             using (var conn = new MKConnection("192.168.1.74", "admin", "KristjanJaKregor"))
             {
                 conn.Open();
@@ -126,26 +131,40 @@ namespace AssetTracking
 
                 if (match.Success)
                 {
+                    int rssi = int.Parse(match.Groups[1].Value);
+                    Console.WriteLine($"The value of rssi on Gateway 1 is: {rssi}");
+                    if (rssi > strongestRssi)
+                    {
+                        strongestRssi = rssi;
+                        strongestRssiGateway = "Gateway 1";
+                    }
+                }
+                /* 
+                if (match.Success)
+                {
                     rssiValue = match.Groups[1].Value;
                     Console.WriteLine($"The value of rssi on Gateway 1 is: {rssiValue}");
                     label6.Text = rssiValue;
                     pictureFloorplan.Invalidate();
                 }
+                */
                 else
                 {
                     Console.WriteLine("Rssi not found in the string on Gateway 1.");
                 }
+                
             }
 
-
+            // Gateway 2
             using (var conn = new MKConnection("192.168.1.161", "admin", "KristjanJaKregor"))
             {
 
                 conn.Open();
 
-                string assetName1 = textSearch.Text; // Your variable that holds the MAC address
-                var cmd = conn.CreateCommand(string.Format("iot bluetooth scanners advertisements print where address={0}", assetName));
+                //string assetName1 = textSearch.Text; // Your variable that holds the MAC address
                 string originalString1 = "";
+                var cmd = conn.CreateCommand(string.Format("iot bluetooth scanners advertisements print where address={0}", assetName));
+                
                 try
                 {
                     var result = cmd.ExecuteReader();
@@ -168,15 +187,33 @@ namespace AssetTracking
 
                 if (match1.Success)
                 {
-                    rssiValue = match1.Groups[1].Value;
+                    int rssi = int.Parse(match1.Groups[1].Value);
+                    //rssiValue = match1.Groups[1].Value;
                     Console.WriteLine($"The value of rssi on Gateway 2 is: {rssiValue}");
-                    label5.Text = rssiValue;
-                    pictureFloorplan.Invalidate();
+                    //label5.Text = rssiValue;
+                    //pictureFloorplan.Invalidate();
+                    if (rssi > strongestRssi)
+                    {
+                        strongestRssi = rssi;
+                        strongestRssiGateway = "Gateway 2";
+                    }
                 }
                 else
                 {
                     Console.WriteLine("Rssi not found in the string on Gateway 2.");
                 }
+            }
+            // Display the strongest RSSI and update the UI
+            if (strongestRssiGateway != "")
+            {
+                Console.WriteLine($"The strongest RSSI is {strongestRssi} from {strongestRssiGateway}.");
+                label6.Text = $"Strongest RSSI: {strongestRssi} ({strongestRssiGateway})";
+                rssiValue = strongestRssi.ToString(); // Update the global RSSI value
+                pictureFloorplan.Invalidate(); // Redraw the circle on the PictureBox
+            }
+            else
+            {
+                Console.WriteLine("No RSSI values found.");
             }
         }
     }
