@@ -157,7 +157,7 @@ namespace AssetTracking
 
             // Gateway 2
             using (var conn = new MKConnection("192.168.1.161", "admin", "KristjanJaKregor"))
-            
+            {
 
                 conn.Open();
 
