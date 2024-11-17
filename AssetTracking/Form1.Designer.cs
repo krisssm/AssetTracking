@@ -40,7 +40,6 @@
             this.label6 = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.textBox2 = new System.Windows.Forms.TextBox();
-            this.button2 = new System.Windows.Forms.Button();
             this.btnFloorplan = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
@@ -151,20 +150,6 @@
             this.textBox2.Size = new System.Drawing.Size(168, 20);
             this.textBox2.TabIndex = 15;
             // 
-            // button2
-            // 
-            this.button2.BackColor = System.Drawing.Color.LightSkyBlue;
-            this.button2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.button2.Font = new System.Drawing.Font("Microsoft YaHei", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button2.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.button2.Location = new System.Drawing.Point(61, 484);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(135, 50);
-            this.button2.TabIndex = 16;
-            this.button2.Text = "Search";
-            this.button2.UseVisualStyleBackColor = false;
-            // 
             // btnFloorplan
             // 
             this.btnFloorplan.BackColor = System.Drawing.Color.LightSkyBlue;
@@ -172,11 +157,11 @@
             this.btnFloorplan.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btnFloorplan.Font = new System.Drawing.Font("Microsoft YaHei", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnFloorplan.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.btnFloorplan.Location = new System.Drawing.Point(61, 596);
+            this.btnFloorplan.Location = new System.Drawing.Point(61, 484);
             this.btnFloorplan.Name = "btnFloorplan";
             this.btnFloorplan.Size = new System.Drawing.Size(135, 50);
             this.btnFloorplan.TabIndex = 0;
-            this.btnFloorplan.Text = "Floor plan";
+            this.btnFloorplan.Text = "Show";
             this.btnFloorplan.UseVisualStyleBackColor = false;
             this.btnFloorplan.Click += new System.EventHandler(this.btnFloorplan_Click);
             // 
@@ -186,7 +171,6 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
             this.ClientSize = new System.Drawing.Size(1012, 750);
-            this.Controls.Add(this.button2);
             this.Controls.Add(this.textBox2);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.label6);
@@ -199,8 +183,10 @@
             this.Controls.Add(this.textSearch);
             this.Controls.Add(this.btnFloorplan);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.MaximumSize = new System.Drawing.Size(1028, 789);
+            this.MinimumSize = new System.Drawing.Size(1028, 789);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "Asset tracking";
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -218,7 +204,6 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.TextBox textBox2;
-        private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button btnFloorplan;
     }
 }
