@@ -34,7 +34,6 @@ namespace AssetTracking
         public Form1()
         {
 
-           
             this.Text = "Draw Empty Circle on PictureBox Example";
             this.Size = new Size(400, 400);
 
@@ -69,7 +68,16 @@ namespace AssetTracking
 
         private void btnSearch_Click(object sender, EventArgs e)
         {
-            timer1.Enabled = true;
+            if (!string.IsNullOrEmpty(textSearch.Text))
+            {
+                timer1.Enabled = true;
+            }
+            else
+            {
+                // TextBox is empty
+                MessageBox.Show("Please enter an asset.");
+            }
+            
         }
         private void PictureFloorplan_Paint(object sender, PaintEventArgs e)
         {
@@ -135,6 +143,7 @@ namespace AssetTracking
                 // Regular expression to match rssi value
                 var match = Regex.Match(originalString, @"rssi=(.*?)=");
 
+                /*
                 if (match.Success)
                 {
                     rssi1 = int.Parse(match.Groups[1].Value);
@@ -145,7 +154,8 @@ namespace AssetTracking
                         strongestRssiGateway = "Gateway 1";
                     }
                 }
-                
+                */
+
                 if (match.Success)
                 {
                     rssiValue = match.Groups[1].Value;
@@ -167,7 +177,6 @@ namespace AssetTracking
 
                 conn.Open();
 
-                //string assetName1 = textSearch.Text; // Your variable that holds the MAC address
                 string originalString1 = "";
                 var cmd = conn.CreateCommand(string.Format("iot bluetooth scanners advertisements print where address={0}", assetName));
                 
@@ -257,5 +266,12 @@ namespace AssetTracking
             pictureFloorplan.Invalidate();
         }
 
+        private void textSearch_TextChanged(object sender, EventArgs e)
+        {
+            if (timer1.Enabled == true) //Kui assetit muuta samal ajal kui otsib, lõpetab otsimise
+            { 
+                timer1.Enabled = false; 
+            }
+        }
     }
 }
