@@ -45,7 +45,7 @@ namespace AssetTracking
                 Size = new Size(750, 750), // Size of the PictureBox
                 BorderStyle = BorderStyle.FixedSingle,
                 Image = Image.FromFile("C:\\Users\\Kris\\source\\repos\\AssetTracking\\Plaan.png"), // Set the image path
-                SizeMode = PictureBoxSizeMode.StretchImage // Adjust the image to fit the PictureBox
+                SizeMode = PictureBoxSizeMode.Zoom // Adjust the image to fit the PictureBox
             };
 
             // Subscribe to the Paint event of the PictureBox

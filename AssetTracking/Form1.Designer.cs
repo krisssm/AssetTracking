@@ -124,9 +124,9 @@
             this.label5.Font = new System.Drawing.Font("Microsoft YaHei", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label5.Location = new System.Drawing.Point(202, 716);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(42, 25);
+            this.label5.Size = new System.Drawing.Size(60, 25);
             this.label5.TabIndex = 12;
-            this.label5.Text = "-53";
+            this.label5.Text = "        ";
             // 
             // label6
             // 
@@ -134,9 +134,9 @@
             this.label6.Font = new System.Drawing.Font("Microsoft YaHei", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label6.Location = new System.Drawing.Point(202, 691);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(42, 25);
+            this.label6.Size = new System.Drawing.Size(54, 25);
             this.label6.TabIndex = 13;
-            this.label6.Text = "-53";
+            this.label6.Text = "       ";
             // 
             // textBox1
             // 
