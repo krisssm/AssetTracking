@@ -17,6 +17,7 @@ using System.Drawing.Drawing2D;
 using System.Data.SqlClient;
 using System.IO;
 using Polly.Caching;
+using System.Linq.Expressions;
 
 namespace AssetTracking
 {
@@ -143,7 +144,7 @@ namespace AssetTracking
                 // Regular expression to match rssi value
                 var match = Regex.Match(originalString, @"rssi=(.*?)=");
 
-                /*
+                
                 if (match.Success)
                 {
                     rssi1 = int.Parse(match.Groups[1].Value);
@@ -154,7 +155,7 @@ namespace AssetTracking
                         strongestRssiGateway = "Gateway 1";
                     }
                 }
-                */
+                
 
                 if (match.Success)
                 {
@@ -231,6 +232,19 @@ namespace AssetTracking
                 Console.WriteLine("No RSSI values found.");
             }
             */
+
+            switch (strongestRssiGateway)
+            {
+                case "Gateway 1":
+                    label7.Text = "1";
+                    break;
+                case "Gateway 2":
+                    label7.Text = "2";
+                    break;
+                default:
+                    label7.Text = "None";
+                    break;
+            }
         }
 
         private void btnFloorplan_Click(object sender, EventArgs e)
@@ -273,5 +287,7 @@ namespace AssetTracking
                 timer1.Enabled = false; 
             }
         }
+
+      
     }
 }
