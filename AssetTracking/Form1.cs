@@ -18,6 +18,8 @@ using System.Data.SqlClient;
 using System.IO;
 using Polly.Caching;
 using System.Linq.Expressions;
+using System.Diagnostics.Eventing.Reader;
+using System.Runtime.Remoting.Messaging;
 
 namespace AssetTracking
 {
@@ -25,10 +27,19 @@ namespace AssetTracking
     {
         private PictureBox pictureFloorplan;
 
-        string rssiValue = "-53";
         int rssi1;
         int rssi2;
+        int avgrssi1;
+        int avgrssi2;
         int horizontal;
+
+        int count1 = 1;
+        int count2 = 1;
+        int errcount1 = 1;
+        int errcount2 = 1;
+
+        int errMax = 10; //Error count to check if asset exists
+        int averageCount = 10; //Amount of average signals to calculate
 
 
 
@@ -48,7 +59,7 @@ namespace AssetTracking
                 SizeMode = PictureBoxSizeMode.Zoom // Adjust the image to fit the PictureBox
             };
 
-            // Subscribe to the Paint event of the PictureBox
+            //New paint event
             pictureFloorplan.Paint += new PaintEventHandler(PictureFloorplan_Paint);
 
             // Add the PictureBox to the form
@@ -66,11 +77,16 @@ namespace AssetTracking
         }
 
 
-
         private void btnSearch_Click(object sender, EventArgs e)
         {
             if (!string.IsNullOrEmpty(textSearch.Text))
             {
+                count1 = 0;
+                count2 = 0;
+                rssi1 = 0;
+                rssi2 = 0;
+                avgrssi1 = 0;
+                avgrssi2 = 0;
                 timer1.Enabled = true;
             }
             else
@@ -102,15 +118,63 @@ namespace AssetTracking
         private void button1_Click(object sender, EventArgs e)
         {
                 timer1.Enabled = false;
-
         }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
             string assetName = textSearch.Text; // Variable that holds the MAC address
-            int strongestRssi = int.MinValue; // Tracks the strongest RSSI value
-            string strongestRssiGateway = ""; //Tracks which gateway has the strongest signal
 
+            //Runs to get 5 averages rssi signals
+            if (count1 != averageCount && count2 != averageCount)
+            {
+                Console.WriteLine("CASE1");
+                count1 += 1;
+                count2 += 1;
+            }
+            else if (count1 != averageCount && count2 == averageCount)
+            {
+                Console.WriteLine("CASE2");
+                count1 += 1;
+            }
+            else if (count1 == averageCount && count2 != averageCount)
+            {
+                Console.WriteLine("CASE3");
+                count2 += 1;
+            }
+            else if (count1 == averageCount && count2 == averageCount)
+            {
+                Console.WriteLine("CASE4");
+                count1 = 1;
+                count2 = 1;
+                avgrssi1 = rssi1 / averageCount + 1;
+                avgrssi2 = rssi2 / averageCount;
+                label6.Text = Convert.ToString(avgrssi1);
+                label5.Text = Convert.ToString(avgrssi2);
+                rssi1 = 0;
+                rssi2 = 0;
+
+                if (avgrssi1 > avgrssi2)
+                {
+                    label7.Text = "1";
+                }
+                else
+                {
+                    label7.Text = "2";
+                }
+                calculateLocation();
+            }
+
+            if (errcount1 > errMax && errcount2 > errMax) //Checks if asset exists
+            {
+                errcount1 = 1;
+                errcount2 = 1;
+                timer1.Enabled = false;
+                MessageBox.Show("Asset not found!");           
+                return;
+            }
+
+            Console.WriteLine($"The count1: {count1}");
+                Console.WriteLine($"The count2: {count2}");
             // Gateway 1
             using (var conn = new MKConnection("192.168.1.74", "admin", "KristjanJaKregor"))
             {
@@ -118,58 +182,42 @@ namespace AssetTracking
 
                 string originalString = "";
                 var cmd = conn.CreateCommand(string.Format("iot bluetooth scanners advertisements print where address={0}", assetName));
+
                 try
                 {
                     var result = cmd.ExecuteReader();
-                    
                     foreach (var line in result)
                     {
                         Console.WriteLine(line);
                         originalString = line;
-
                     }
                 }
-
                 catch (Exception ex)
                 {
                     // Handle any other errors here
                     Console.WriteLine($"Error: {ex.Message}");
                 }
-                
-
 
                 conn.Close();
 
-
                 // Regular expression to match rssi value
                 var match = Regex.Match(originalString, @"rssi=(.*?)=");
-
-                
                 if (match.Success)
                 {
-                    rssi1 = int.Parse(match.Groups[1].Value);
-                    Console.WriteLine($"The value of rssi on Gateway 1 is: {rssi1}");
-                    if (rssi1 > strongestRssi)
+                    errcount1 = 1;
+                    if (count1 != averageCount)
                     {
-                        strongestRssi = rssi1;
-                        strongestRssiGateway = "Gateway 1";
-                    }
-                }
-                
 
-                if (match.Success)
-                {
-                    rssiValue = match.Groups[1].Value;
-                    Console.WriteLine($"The value of rssi on Gateway 1 is: {rssiValue}");
-                    label6.Text = Convert.ToString(rssi1);
-                    pictureFloorplan.Invalidate();
+                        rssi1 += int.Parse(match.Groups[1].Value);
+                    }
+                    //Console.WriteLine($"The value of rssi on Gateway 1 is: {rssi1}");
                 }
-                
                 else
                 {
+                    count1 -= 1;
+                    errcount1 += 1;
                     Console.WriteLine("Rssi not found in the string on Gateway 1.");
-                }
-                
+                }                
             }
 
             // Gateway 2
@@ -195,7 +243,7 @@ namespace AssetTracking
                     // Handle any other errors here
                     Console.WriteLine($"Error: {ex.Message}");
                 }
-              
+
                 conn.Close();
 
                 // Regular expression to match rssi value
@@ -203,47 +251,19 @@ namespace AssetTracking
 
                 if (match1.Success)
                 {
-                    rssi2 = int.Parse(match1.Groups[1].Value);
-                    //rssiValue = match1.Groups[1].Value;
-                    Console.WriteLine($"The value of rssi on Gateway 2 is: {rssi2}");
-                    label5.Text = Convert.ToString(rssi2);
-                    //pictureFloorplan.Invalidate();
-                    if (rssi2 > strongestRssi)
+                    errcount2 = 1;
+                    if (count2 != averageCount)
                     {
-                        strongestRssi = rssi2;
-                        strongestRssiGateway = "Gateway 2";
+                        rssi2 += int.Parse(match1.Groups[1].Value);
                     }
+                    //Console.WriteLine($"The value of rssi on Gateway 2 is: {rssi2}");
                 }
                 else
                 {
+                    count2 -= 1;
+                    errcount2 += 1;
                     Console.WriteLine("Rssi not found in the string on Gateway 2.");
                 }
-            }
-            // Display the strongest RSSI and update the UI
-            /*if (strongestRssiGateway != "")
-            {
-                Console.WriteLine($"The strongest RSSI is {strongestRssi} from {strongestRssiGateway}.");
-                label6.Text = $"Strongest RSSI: {strongestRssi} ({strongestRssiGateway})";
-                rssiValue = strongestRssi.ToString(); // Update the global RSSI value
-                pictureFloorplan.Invalidate(); // Redraw the circle on the PictureBox
-            }
-            else
-            {
-                Console.WriteLine("No RSSI values found.");
-            }
-            */
-
-            switch (strongestRssiGateway)
-            {
-                case "Gateway 1":
-                    label7.Text = "1";
-                    break;
-                case "Gateway 2":
-                    label7.Text = "2";
-                    break;
-                default:
-                    label7.Text = "None";
-                    break;
             }
         }
 
@@ -252,32 +272,7 @@ namespace AssetTracking
             rssi1 = Convert.ToInt16(textBox1.Text);
             rssi2 = Convert.ToInt16(textBox2.Text);
 
-            if (rssi2 > -60 && rssi1 > -60 && rssi2 < -45 && rssi1 < -45) //Saatja on kahe gateway vahel enamvähem keskel
-            {
-                Console.WriteLine("CASE 5");
-                horizontal = 0;
-            }
-            if (rssi1 > -50 && rssi2 < -50 && rssi2 > -70) //Saatja on kahe gateway vahel ja rohkem gateway 1 poole
-            {
-                Console.WriteLine("CASE 1");
-                horizontal = -2 * rssi2;
-            }
-            else if(rssi2 > -60 && rssi1 < -60 && rssi1 > -70) //Saatja on kahe gateway vahel ja rohkem gateway 2 poole
-            {
-                Console.WriteLine("CASE 2");
-                horizontal = -2 * rssi1;
-            }
-            else if (rssi1 < -30 && rssi2 < -70) //Saatja on möödas gateway 1st
-            {
-                Console.WriteLine("CASE 3");
-                horizontal = 40 - 3 * rssi1;
-            }
-            else if (rssi2 < -30 && rssi1 < -70) //Saatja on möödas gateway 2st
-            {
-                Console.WriteLine("CASE 4");
-                horizontal = -40 + 3 * rssi1;
-            }
-            pictureFloorplan.Invalidate();
+            calculateLocation();
         }
 
         private void textSearch_TextChanged(object sender, EventArgs e)
@@ -288,6 +283,40 @@ namespace AssetTracking
             }
         }
 
-      
+        private void calculateLocation()
+        {
+            Console.WriteLine($"The average of rssi on Gateway 1 is: {avgrssi1}");
+            Console.WriteLine($"The average of rssi on Gateway 2 is: {avgrssi2}");
+            if (avgrssi2 > -70 && avgrssi1 > -70) //Saatja on kahe gateway vahel enamvähem keskel
+            {
+                if (avgrssi1 > avgrssi2) //Saatja on kahe gateway vahel ja rohkem gateway 1 poole
+                {
+                    Console.WriteLine("CASE 1");
+                    horizontal = -1 * avgrssi2;
+                }
+                else if (avgrssi2 > avgrssi1) //Saatja on kahe gateway vahel ja rohkem gateway 2 poole
+                {
+                    Console.WriteLine("CASE 2");
+                    horizontal = -1 * avgrssi1;
+                }
+                else
+                {
+                    Console.WriteLine("CASE 5");
+                    horizontal = 0;
+                }
+                
+            } 
+            else if ((avgrssi1 < -30 && avgrssi1 > -70) && avgrssi2 < -70) //Saatja on möödas gateway 1st
+            {
+             Console.WriteLine("CASE 3");
+              horizontal = 40 - 3 * avgrssi1;
+            }
+            else if ((avgrssi2 < -30 && avgrssi2 > -70) && avgrssi1 < -70) //Saatja on möödas gateway 2st
+            {
+               Console.WriteLine("CASE 4");
+                horizontal = -40 + 3 * avgrssi1;
+            }
+            pictureFloorplan.Invalidate();
+        } 
     }
 }
