@@ -155,11 +155,11 @@ namespace AssetTracking
 
                 if (avgrssi1 > avgrssi2)
                 {
-                    label7.Text = "1";
+                    label7.Text = "Pulmonology";
                 }
                 else
                 {
-                    label7.Text = "2";
+                    label7.Text = "Neurology";
                 }
                 calculateLocation();
             }
@@ -317,6 +317,8 @@ namespace AssetTracking
                 horizontal = -40 + 3 * avgrssi1;
             }
             pictureFloorplan.Invalidate();
-        } 
+        }
+
+        
     }
 }

@@ -170,18 +170,18 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Microsoft YaHei", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(120, 245);
+            this.label2.Font = new System.Drawing.Font("Microsoft YaHei", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(55, 241);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(63, 25);
+            this.label2.Size = new System.Drawing.Size(152, 31);
             this.label2.TabIndex = 16;
-            this.label2.Text = "Floor:";
+            this.label2.Text = "Department";
             // 
             // label7
             // 
             this.label7.AutoSize = true;
             this.label7.Font = new System.Drawing.Font("Microsoft YaHei", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.Location = new System.Drawing.Point(187, 497);
+            this.label7.Location = new System.Drawing.Point(71, 291);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(36, 25);
             this.label7.TabIndex = 17;
