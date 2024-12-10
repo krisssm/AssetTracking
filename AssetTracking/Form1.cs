@@ -59,7 +59,6 @@ namespace AssetTracking
                 SizeMode = PictureBoxSizeMode.Zoom // Adjust the image to fit the PictureBox
             };
 
-            //New paint event
             pictureFloorplan.Paint += new PaintEventHandler(PictureFloorplan_Paint);
 
             // Add the PictureBox to the form
@@ -98,13 +97,12 @@ namespace AssetTracking
         }
         private void PictureFloorplan_Paint(object sender, PaintEventArgs e)
         {
-            // Get the Graphics object from the PaintEventArgs
+            // Get the Graphics object
             Graphics g = e.Graphics;
 
             // Define the circle's position and size
             int centerX = pictureFloorplan.Width / 2 - horizontal; // Center of the PictureBox
             int centerY = pictureFloorplan.Height / 2; // Center of the PictureBox
-            //int radius = (int.Parse(rssiValue) -20) * -3; // Radius of the circle
             int radius = 30; // Radius of the circle
 
             // Create a pen to draw the circle
@@ -124,7 +122,7 @@ namespace AssetTracking
         {
             string assetName = textSearch.Text; // Variable that holds the MAC address
 
-            //Runs to get 5 averages rssi signals
+            //Runs to get average rssi signals
             if (count1 != averageCount && count2 != averageCount)
             {
                 Console.WriteLine("CASE1");
@@ -269,8 +267,8 @@ namespace AssetTracking
 
         private void btnFloorplan_Click(object sender, EventArgs e)
         {
-            rssi1 = Convert.ToInt16(textBox1.Text);
-            rssi2 = Convert.ToInt16(textBox2.Text);
+            avgrssi1 = Convert.ToInt16(textBox1.Text);
+            avgrssi2 = Convert.ToInt16(textBox2.Text);
 
             calculateLocation();
         }
@@ -287,7 +285,7 @@ namespace AssetTracking
         {
             Console.WriteLine($"The average of rssi on Gateway 1 is: {avgrssi1}");
             Console.WriteLine($"The average of rssi on Gateway 2 is: {avgrssi2}");
-            if (avgrssi2 > -70 && avgrssi1 > -70) //Saatja on kahe gateway vahel enamvähem keskel
+            if (avgrssi2 > -71 && avgrssi1 > -71) //Saatja on kahe gateway vahel enamvähem keskel
             {
                 if (avgrssi1 > avgrssi2) //Saatja on kahe gateway vahel ja rohkem gateway 1 poole
                 {
@@ -297,7 +295,7 @@ namespace AssetTracking
                 else if (avgrssi2 > avgrssi1) //Saatja on kahe gateway vahel ja rohkem gateway 2 poole
                 {
                     Console.WriteLine("CASE 2");
-                    horizontal = -1 * avgrssi1;
+                    horizontal = avgrssi1;
                 }
                 else
                 {
@@ -306,15 +304,15 @@ namespace AssetTracking
                 }
                 
             } 
-            else if ((avgrssi1 < -30 && avgrssi1 > -70) && avgrssi2 < -70) //Saatja on möödas gateway 1st
+            else if ((avgrssi1 < -19 && avgrssi1 > -71) && avgrssi2 < -71) //Saatja on möödas gateway 1st
             {
              Console.WriteLine("CASE 3");
               horizontal = 40 - 3 * avgrssi1;
             }
-            else if ((avgrssi2 < -30 && avgrssi2 > -70) && avgrssi1 < -70) //Saatja on möödas gateway 2st
+            else if ((avgrssi2 < -19 && avgrssi2 > -71) && avgrssi1 < -71) //Saatja on möödas gateway 2st
             {
                Console.WriteLine("CASE 4");
-                horizontal = -40 + 3 * avgrssi1;
+                horizontal = -40 + 3 * avgrssi2;
             }
             pictureFloorplan.Invalidate();
         }
