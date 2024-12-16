@@ -39,7 +39,7 @@ namespace AssetTracking
         int errcount2 = 1;
 
         int errMax = 10; //Error count to check if asset exists
-        int averageCount = 10; //Amount of average signals to calculate
+        int averageCount = 5; //Amount of average signals to calculate
 
 
 
@@ -128,6 +128,7 @@ namespace AssetTracking
                 Console.WriteLine("CASE1");
                 count1 += 1;
                 count2 += 1;
+
             }
             else if (count1 != averageCount && count2 == averageCount)
             {
@@ -144,10 +145,8 @@ namespace AssetTracking
                 Console.WriteLine("CASE4");
                 count1 = 1;
                 count2 = 1;
-                avgrssi1 = rssi1 / averageCount + 1;
+                avgrssi1 = rssi1 / averageCount;
                 avgrssi2 = rssi2 / averageCount;
-                label6.Text = Convert.ToString(avgrssi1);
-                label5.Text = Convert.ToString(avgrssi2);
                 rssi1 = 0;
                 rssi2 = 0;
 
@@ -265,13 +264,7 @@ namespace AssetTracking
             }
         }
 
-        private void btnFloorplan_Click(object sender, EventArgs e)
-        {
-            avgrssi1 = Convert.ToInt16(textBox1.Text);
-            avgrssi2 = Convert.ToInt16(textBox2.Text);
-
-            calculateLocation();
-        }
+      
 
         private void textSearch_TextChanged(object sender, EventArgs e)
         {
